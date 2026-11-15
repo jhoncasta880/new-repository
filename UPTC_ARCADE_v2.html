@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="theme-color" content="#0b1024">
+<title>UPTC ARCADE — Edición mejorada</title>
+<style>
+:root{--bg:#090b12;--panel:#171a22;--panel2:#242936;--line:#66501d;--gold:#ffc928;--cyan:#ffe27a;--pink:#ff9c35;--white:#fffdf4;--muted:#c6c0aa;--green:#8fe36b;--red:#ff7b83}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(ellipse at 50% 0%,#55400d 0%,transparent 42%),radial-gradient(ellipse at 100% 40%,#29200b 0%,transparent 35%),var(--bg);color:var(--white);font-family:Inter,system-ui,-apple-system,Segoe UI,Arial,sans-serif}
+button{font:inherit;border:0;cursor:pointer;font-weight:850;border-radius:14px;padding:12px 16px;transition:transform .12s,filter .12s}button:active{transform:scale(.97)}button:disabled{opacity:.45;cursor:not-allowed}
+#app{width:min(100%,960px);margin:auto;padding:18px 15px 30px;min-height:100vh}
+header{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:18px}
+.logo{font-weight:1000;font-size:clamp(22px,5vw,32px);letter-spacing:1px}.logo b{color:var(--gold)}.logo small{display:block;color:var(--muted);font-size:10px;letter-spacing:3px;font-weight:800;margin-top:-3px}
+.record{background:#211c10;border:1px solid var(--line);padding:9px 13px;border-radius:14px;font-size:13px;color:var(--muted);white-space:nowrap}.record strong{color:var(--gold)}
+.view{display:none;animation:enter .28s ease}.view.active{display:block}@keyframes enter{from{opacity:0;transform:translateY(9px)}to{opacity:1;transform:none}}
+.hero{position:relative;overflow:hidden;border:2px solid #b88c19;border-radius:25px;padding:25px 23px;margin-bottom:17px;background:linear-gradient(115deg,#332708,#17191e 70%,#3b2a08)}
+.hero:after{content:"✦";position:absolute;right:8%;top:-42px;font-size:190px;color:#ffffff0d;transform:rotate(15deg)}
+.eyebrow{color:var(--cyan);font-weight:900;font-size:11px;letter-spacing:2px}.hero h1{font-size:clamp(28px,6vw,45px);line-height:1.05;margin:9px 0}.hero h1 span{color:var(--gold)}.hero p{color:#d0d9ed;max-width:590px;line-height:1.5;margin:0}
+.gamegrid{display:grid;grid-template-columns:repeat(3,1fr);gap:13px}
+.game{position:relative;overflow:hidden;background:linear-gradient(150deg,#292315,#121317);border:1px solid #8b6815;border-radius:21px;padding:17px;min-height:220px;display:flex;flex-direction:column;transition:.2s}
+.game:hover{transform:translateY(-3px);border-color:#8295c4}
+.game .icon{width:56px;height:56px;display:grid;place-items:center;border-radius:17px;font-size:29px;margin-bottom:14px}
+.c1{background:#594a2c}.c2{background:#284b68}.c3{background:#593456}
+.game h2{font-size:19px;margin:0 0 7px}.game p{font-size:13px;color:var(--muted);line-height:1.45;margin:0 0 15px;flex:1}
+.play{color:#111a30;background:linear-gradient(90deg,var(--gold),#ffe6a1);width:100%;box-shadow:0 5px 0 #b88a35}
+.bottomstats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:15px}
+.stat{background:#121c36;border:1px solid #2e4168;border-radius:15px;padding:12px;text-align:center;color:var(--muted);font-size:12px}
+.stat b{display:block;color:#fff;font-size:20px;margin-top:3px}
+.toolbar{display:flex;align-items:center;justify-content:space-between;gap:9px;flex-wrap:wrap;margin-bottom:12px}
+.back{background:#33290f;color:white;border:1px solid #9a751c}.tag{background:#1e3155;border:1px solid #3d5883;color:var(--cyan);border-radius:99px;padding:8px 12px;font-size:12px;font-weight:900}
+.board{background:linear-gradient(145deg,#192647,#111a33);border:1px solid #3a4d76;border-radius:23px;padding:clamp(16px,4vw,27px);min-height:390px;box-shadow:0 18px 40px #0003}
+.progressrow{display:flex;justify-content:space-between;color:var(--muted);font-size:12px;font-weight:800}.track{height:8px;background:#29395d;border-radius:99px;overflow:hidden;margin:9px 0 22px}.track div{height:100%;width:0;background:linear-gradient(90deg,var(--cyan),#9af5c6);border-radius:99px;transition:width .25s}
+.prompt{color:var(--muted);text-align:center;font-size:14px;margin:10px 0}.term{font-size:clamp(24px,6vw,34px);font-weight:1000;text-align:center;margin:16px 0 22px;overflow-wrap:anywhere}
+.options{display:grid;grid-template-columns:1fr 1fr;gap:10px}.option{background:#26385f;color:#fff;border:1px solid #536b99;min-height:58px}.option.good{background:#175b49;border-color:var(--green)}.option.bad{background:#663348;border-color:var(--red)}
+.feedback{text-align:center;min-height:30px;margin:13px 0 0;font-weight:850}
+.letterline{display:flex;justify-content:center;flex-wrap:wrap;gap:6px;min-height:54px;background:#0e1830;border:1px dashed #526b95;border-radius:14px;padding:8px}
+.slot{display:grid;place-items:center;min-width:34px;height:40px;padding:0 5px;border:1px solid #516a92;border-radius:9px;color:var(--gold);font-weight:950;font-size:19px}
+.letters{display:flex;justify-content:center;flex-wrap:wrap;gap:7px;margin:18px 0}.letter{min-width:40px;height:46px;padding:5px;background:#eaf1ff;color:#182443;font-size:21px;box-shadow:0 3px 0 #9baac4}
+.actionrow{display:flex;justify-content:center;gap:9px;flex-wrap:wrap;margin-top:15px}.soft{background:#2b4168;color:#fff;border:1px solid #536b91}.confirm{background:var(--gold);color:#17203a}
+.pairs{display:grid;grid-template-columns:1fr 1fr;gap:12px}.paircol{display:grid;gap:8px}.pair{min-height:54px;background:#26385f;border:1px solid #536b99;color:white}.pair.sel{outline:3px solid var(--gold);background:#3c5280}.pair.done{background:#175b49;border-color:var(--green);opacity:.85}
+.result{text-align:center;padding:18px 4px}.medal{font-size:55px}.points{font-size:56px;font-weight:1000;color:var(--gold);line-height:1.1;margin:12px}.result h2{font-size:27px}.muted{color:var(--muted);line-height:1.5}
+footer{text-align:center;color:#7283a8;font-size:11px;margin-top:22px}
+@media(max-width:680px){#shopItems{grid-template-columns:1fr!important}.gamegrid{grid-template-columns:1fr}.game{min-height:unset;display:grid;grid-template-columns:58px 1fr;column-gap:13px;align-items:center;padding:14px}.game .icon{grid-row:1/4;margin:0}.game h2{margin:0 0 4px}.game p{margin:0 0 10px}.game button{grid-column:2}.bottomstats{gap:7px}.stat{padding:10px 5px}.stat b{font-size:17px}.options{grid-template-columns:1fr}.board{min-height:410px}.hero{padding:21px}}
+
+.level-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:20px}
+.level-card{min-height:94px;display:flex;align-items:center;gap:12px;text-align:left;color:#fff8df;background:linear-gradient(135deg,#4a3a12,#242015);border:2px solid #9a751c;border-radius:17px;padding:12px;box-shadow:inset 0 1px 0 #fff3}
+.level-card.locked{filter:saturate(.45);opacity:.55;background:#25231b;border-color:#665a35}
+.level-number{display:grid;place-items:center;min-width:44px;height:50px;border-radius:12px;background:#17150e;border:1px solid #b88c19;font-size:25px;font-weight:1000;color:#fff}
+.level-info{display:flex;flex-direction:column;gap:5px;flex:1}.level-info strong{font-size:14px}.level-stars{color:#ffc928;letter-spacing:2px;font-size:15px}.level-stars .off{color:#514b37}
+@media(max-width:420px){.level-grid{grid-template-columns:1fr}.level-card{min-height:82px}}
+</style>
+</head>
+<body>
+<div id="app">
+<header><div class="logo">🦅 UPTC <b>ARCADE</b><small>JUEGA · APRENDE · DISFRUTA</small></div><div style="display:flex;gap:7px;align-items:center"><div class="record">🪙 <strong id="coins">0</strong></div><div class="record">🏆 <strong id="record">0</strong></div><button class="back" onclick="openShop()">🛒 Tienda</button></div></header>
+
+<section id="home" class="view active">
+ <div class="hero"><div class="eyebrow">BIENVENIDO A LA EXPERIENCIA</div><h1>Tu conocimiento.<br><span>Tu siguiente nivel.</span></h1><p>Entra a los retos, aprende vocabulario universitario en español e inglés y consigue la mejor puntuación.</p></div>
+ <div class="gamegrid">
+  <article class="game"><div class="icon c1">⚡</div><h2>Preguntas rápidas</h2><p>10 preguntas, cronómetro y respuestas de opción múltiple. ¡Piensa rápido!</p><button class="play" onclick="openLevels('PREGUNTAS RÁPIDAS')">VER NIVELES ⭐</button></article>
+  <article class="game"><div class="icon c2">🔤</div><h2>Palabras desordenadas</h2><p>Descifra las letras, usa las pistas y completa cada palabra correctamente.</p><button class="play" onclick="openLevels('PALABRAS DESORDENADAS')">VER NIVELES ⭐</button></article>
+  <article class="game"><div class="icon c3">🔗</div><h2>Conecta palabras</h2><p>Relaciona cada término en español con su traducción en inglés.</p><button class="play" onclick="openLevels('CONECTA PALABRAS')">VER NIVELES ⭐</button></article>
+ </div>
+ <div class="bottomstats"><div class="stat">🔓 NIVELES<b>5 por juego</b></div><div class="stat">⭐ PUNTOS TOTALES<b id="total">0</b></div><div class="stat">📚 VOCABULARIO<b id="wordCount">100+</b></div><div class="stat">🎯 MODOS<b>3 juegos</b></div></div>
+</section>
+
+<section id="levelView" class="view">
+ <div class="toolbar"><button class="back" onclick="home()">← Menú principal</button><span class="tag">⭐ SELECCIONA UN NIVEL</span><span class="tag" id="levelModeLabel">JUEGO</span></div>
+ <div class="board"><h2 style="text-align:center;color:var(--gold);margin-top:0">Elige tu desafío</h2><p class="muted" style="text-align:center">Completa cada nivel con al menos 8 de 10 retos para desbloquear el siguiente. Puedes repetir los niveles que ya abriste.</p><div id="levelGrid" class="level-grid"></div></div>
+</section>
+<section id="gameView" class="view">
+ <div class="toolbar"><button class="back" onclick="home()">← Menú principal</button><span class="tag" id="modeName">RETO</span><span class="tag" id="roundLabel">1 / 10</span></div>
+ <div class="board"><div class="progressrow"><span id="progressText">PROGRESO</span><span id="scoreText">0 PTS</span></div><div class="track"><div id="progressBar"></div></div><div id="gameContent"></div></div>
+</section>
+<section id="shopView" class="view"><div class="toolbar"><button class="back" onclick="home()">← Volver</button><span class="tag">🪙 TIENDA ARCADE</span><span class="tag" id="shopCoins">0 monedas</span></div><div class="board"><h2>Personaliza tu juego 🛍️</h2><p class="muted">Gana monedas jugando y gástalas en colores, música y pistas. ¡Supera cada nivel con 8 aciertos o más!</p><div id="shopItems" class="gamegrid" style="grid-template-columns:repeat(2,1fr)"></div></div></section>
+<section id="resultView" class="view"><div class="board result"><div class="medal" id="medal">🏆</div><h2 id="resultHeading">¡Buen trabajo!</h2><div class="points" id="pointsEarned">+0</div><p class="muted" id="resultDetail"></p><div class="actionrow"><button class="confirm" id="replay">VOLVER A JUGAR</button><button class="soft" onclick="home()">MENÚ PRINCIPAL</button></div></div></section>
+<footer>UPTC ARCADE · Vocabulario universitario bilingüe</footer>
+</div>
+<script>
+const words=[
+['Universidad','University'],['Educación','Education'],['Investigación','Research'],['Tecnología','Technology'],['Ciencia','Science'],['Cultura','Culture'],['Estudiantes','Students'],['Docentes','Teachers'],['Biblioteca','Library'],['Ingeniería','Engineering'],['Aprendizaje','Learning'],['Innovación','Innovation'],['Conocimiento','Knowledge'],['Formación','Training'],['Desarrollo','Development'],['Facultad','Faculty'],['Carrera','Degree'],['Profesor','Professor'],['Laboratorio','Laboratory'],['Campus','Campus'],
+['Aula','Classroom'],['Examen','Exam'],['Tarea','Homework'],['Cuaderno','Notebook'],['Libro','Book'],['Lápiz','Pencil'],['Computador','Computer'],['Red','Network'],['Internet','Internet'],['Programa','Program'],['Proyecto','Project'],['Bibliografía','Bibliography'],['Semestre','Semester'],['Calificación','Grade'],['Horario','Schedule'],['Inscripción','Enrollment'],['Graduación','Graduation'],['Título','Degree'],['Beca','Scholarship'],['Investigador','Researcher'],
+['Matemáticas','Mathematics'],['Historia','History'],['Física','Physics'],['Química','Chemistry'],['Biología','Biology'],['Geografía','Geography'],['Idioma','Language'],['Inglés','English'],['Español','Spanish'],['Comunicación','Communication'],['Análisis','Analysis'],['Debate','Debate'],['Lectura','Reading'],['Escritura','Writing'],['Pensamiento','Thinking'],['Creatividad','Creativity'],['Liderazgo','Leadership'],['Equipo','Team'],['Práctica','Practice'],['Teoría','Theory'],
+['Energía','Energy'],['Electricidad','Electricity'],['Circuito','Circuit'],['Cable','Cable'],['Servidor','Server'],['Usuario','User'],['Archivo','File'],['Carpeta','Folder'],['Pantalla','Screen'],['Teclado','Keyboard'],['Ratón','Mouse'],['Software','Software'],['Hardware','Hardware'],['Seguridad','Security'],['Contraseña','Password'],['Conexión','Connection'],['Dispositivo','Device'],['Datos','Data'],['Sistema','System'],['Mantenimiento','Maintenance'],
+['Colombia','Colombia'],['Boyacá','Boyaca'],['Tunja','Tunja'],['Sede','Campus'],['Rectoría','Rectorate'],['Admisión','Admission'],['Bienestar','Wellbeing'],['Deporte','Sport'],['Arte','Art'],['Música','Music'],['Comunidad','Community'],['Responsabilidad','Responsibility'],['Respeto','Respect'],['Ética','Ethics'],['Oportunidad','Opportunity'],['Meta','Goal'],['Éxito','Success'],['Futuro','Future'],['Vocación','Vocation'],['Profesional','Professional']
+];
+let total=+(localStorage.getItem('arcadeTotal')||0),record=+(localStorage.getItem('arcadeRecord')||0),coins=+(localStorage.getItem('arcadeCoins')||0),mode='',round=0,score=0,correct=0,challengesCompleted=0,timer=null,time=15,current=null,answer=[],selectedSpanish=null,matched=[],level=1,selectedLevel=1;
+const levelNames=['Principiante','Explorador','Avanzado','Experto','Maestro'];
+let unlocked=JSON.parse(localStorage.getItem('arcadeLevels')||'{"PREGUNTAS RÁPIDAS":1,"PALABRAS DESORDENADAS":1,"CONECTA PALABRAS":1}');
+let owned=JSON.parse(localStorage.getItem('arcadeOwned')||'["theme_default","music_off"]'),theme=localStorage.getItem('arcadeTheme')||'default',music=localStorage.getItem('arcadeMusic')||'off',audioCtx=null,musicTimer=null,levelStars=JSON.parse(localStorage.getItem('arcadeStars')||'{}');
+const $=id=>document.getElementById(id);
+function stats(){$('record').textContent=record;$('total').textContent=total;$('coins').textContent=coins}
+function saveCoins(){localStorage.setItem('arcadeCoins',coins);stats()}
+function openShop(){renderShop();show('shopView')}
+const shop=[
+{id:'theme_default',type:'color',name:'Azul UPTC',price:0,desc:'Tema clásico',value:'default',icon:'🔵'},
+{id:'theme_emerald',type:'color',name:'Verde esmeralda',price:35,desc:'Un toque fresco',value:'emerald',icon:'🟢'},
+{id:'theme_sunset',type:'color',name:'Atardecer',price:35,desc:'Naranja y rosa',value:'sunset',icon:'🟠'},
+{id:'theme_violet',type:'color',name:'Violeta',price:50,desc:'Modo galaxia',value:'violet',icon:'🟣'},
+{id:'theme_gold',type:'color',name:'Dorado UPTC',price:75,desc:'Negro y oro de campeón',value:'gold',icon:'🏅'},
+{id:'theme_ocean',type:'color',name:'Océano',price:65,desc:'Azules profundos',value:'ocean',icon:'🌊'},
+{id:'theme_rose',type:'color',name:'Rosa neón',price:65,desc:'Brillo rosa arcade',value:'rose',icon:'💗'},
+{id:'theme_matrix',type:'color',name:'Matrix',price:80,desc:'Verde digital',value:'matrix',icon:'💚'},
+{id:'music_off',type:'music',name:'Silencio',price:0,desc:'Sin música',value:'off',icon:'🔇'},
+{id:'music_chill',type:'music',name:'Chill arcade',price:45,desc:'Melodía electrónica suave',value:'chill',icon:'🎧'},
+{id:'music_retro',type:'music',name:'Retro 8-bit',price:60,desc:'Sonidos arcade originales',value:'retro',icon:'🕹️'},
+{id:'music_focus',type:'music',name:'Modo concentración',price:55,desc:'Tonos tranquilos',value:'focus',icon:'🎹'},
+{id:'music_pulse',type:'music',name:'Pulso neón',price:70,desc:'Ritmo electrónico original',value:'pulse',icon:'💿'},
+{id:'music_pixel',type:'music',name:'Pixel party',price:75,desc:'Melodía retro rápida',value:'pixel',icon:'🎮'},
+{id:'music_calm',type:'music',name:'Calma espacial',price:60,desc:'Tonos suaves para pensar',value:'calm',icon:'🌌'}
+];
+function renderShop(){
+ $('shopCoins').textContent=coins+' monedas';let box=$('shopItems');box.innerHTML='';
+ shop.forEach(item=>{let active=item.type==='color'?theme===item.value:music===item.value;let bought=owned.includes(item.id);let card=document.createElement('article');card.className='game';card.style.minHeight='150px';card.innerHTML=`<div class="icon c2">${item.icon}</div><h2>${item.name}</h2><p>${item.desc}<br>🪙 ${item.price}</p><button class="play">${active?'EQUIPADO':bought?'EQUIPAR': 'COMPRAR'}</button>`;let btn=card.querySelector('button');btn.disabled=active;btn.onclick=()=>{if(!bought){if(coins<item.price){alert('Te faltan monedas. ¡Juega para conseguir más!');return}coins-=item.price;owned.push(item.id);localStorage.setItem('arcadeOwned',JSON.stringify(owned));saveCoins()}if(item.type==='color'){theme=item.value;localStorage.setItem('arcadeTheme',theme);applyTheme()}else{music=item.value;localStorage.setItem('arcadeMusic',music);setMusic()}renderShop()};box.appendChild(card)})
+}
+function applyTheme(){let themes={default:['#0b1024','#151e3b','#ffd166','#62e6e0'],emerald:['#071f20','#103b37','#8df0b5','#6be7d2'],sunset:['#261322','#48213a','#ffc078','#ff8ab3'],violet:['#160f2e','#2b1c50','#e2b8ff','#8edcff'],gold:['#090b12','#211b0c','#ffc928','#ffe27a'],ocean:['#071b2b','#103c56','#65d8ff','#9cecff'],rose:['#260d20','#4b1740','#ff8bc8','#ffc0e6'],matrix:['#061b10','#10351d','#8cf06b','#b9ff8b']};let t=themes[theme]||themes.default;document.documentElement.style.setProperty('--bg',t[0]);document.documentElement.style.setProperty('--panel',t[1]);document.documentElement.style.setProperty('--gold',t[2]);document.documentElement.style.setProperty('--cyan',t[3])}
+function setMusic(){if(musicTimer)clearInterval(musicTimer);if(music==='off'||!music)return;try{audioCtx=audioCtx||new (window.AudioContext||window.webkitAudioContext)();let seq=music==='retro'||music==='pixel'?[392,523,659,784,659,523]:music==='focus'||music==='calm'?[262,330,392,330]:music==='pulse'?[330,494,587,659,494,392]:[330,392,494,392];let i=0;musicTimer=setInterval(()=>{let o=audioCtx.createOscillator(),g=audioCtx.createGain();o.type=(music==='retro'||music==='pixel'||music==='pulse')?'square':'sine';o.frequency.value=seq[i++%seq.length];g.gain.setValueAtTime(.0001,audioCtx.currentTime);g.gain.exponentialRampToValueAtTime(.025,audioCtx.currentTime+.03);g.gain.exponentialRampToValueAtTime(.0001,audioCtx.currentTime+.22);o.connect(g);g.connect(audioCtx.destination);o.start();o.stop(audioCtx.currentTime+.23)},music==='retro'?260:430)}catch(e){}}
+function hint(cost=8){if(coins<cost){$('fb').textContent='Te faltan monedas para comprar una pista 🪙';return false}coins-=cost;saveCoins();return true}
+function show(id){document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));$(id).classList.add('active')}
+function home(){clearInterval(timer);show('home');stats()}
+function openLevels(m){mode=m;$('levelModeLabel').textContent=m;renderLevels();show('levelView')}
+function renderLevels(){let grid=$('levelGrid');grid.innerHTML='';let max=unlocked[mode]||1;for(let n=1;n<=5;n++){let isOpen=n<=max,stars=(levelStars[mode]||{})[n]||0,card=document.createElement('button');card.className='level-card'+(isOpen?'':' locked');card.innerHTML=`<span class="level-number">${isOpen?n:'🔒'}</span><span class="level-info"><strong>${isOpen?levelNames[n-1]:'Nivel bloqueado'}</strong><span class="level-stars">${[1,2,3].map(i=>`<span class="${i<=stars?'':'off'}">★</span>`).join('')}</span></span><span>${isOpen?'JUGAR ›':'🔒'}</span>`;card.disabled=!isOpen;card.onclick=()=>{selectedLevel=n;mode==='PREGUNTAS RÁPIDAS'?startQuiz():mode==='PALABRAS DESORDENADAS'?startScramble():startConnect()};grid.appendChild(card)}}
+function shuffle(a){return [...a].sort(()=>Math.random()-.5)}
+function begin(m){clearInterval(timer);mode=m;level=selectedLevel||unlocked[m]||1;selectedLevel=0;round=0;score=0;correct=0;challengesCompleted=0;show('gameView');$('modeName').textContent=m+' · NIVEL '+level+' '+levelNames[level-1];$('scoreText').textContent='0 PTS';$('progressBar').style.width='0%'}
+function progress(){$('roundLabel').textContent=Math.min(round+1,10)+' / 10';$('progressText').textContent='NIVEL '+level+' · RETO '+(round+1)+' DE 10';$('scoreText').textContent=score+' PTS';$('progressBar').style.width=(round/10*100)+'%'}
+function finish(){clearInterval(timer);let passed=challengesCompleted>=8,earned=correct*3+Math.floor(score/10)+(passed?level*10:0);let stars=challengesCompleted>=10?3:challengesCompleted>=9?2:challengesCompleted>=8?1:0;levelStars[mode]=levelStars[mode]||{};levelStars[mode][level]=Math.max(levelStars[mode][level]||0,stars);localStorage.setItem('arcadeStars',JSON.stringify(levelStars));coins+=earned;saveCoins();total+=score;record=Math.max(record,score);if(passed&&level<5){unlocked[mode]=Math.max(unlocked[mode]||1,level+1);localStorage.setItem('arcadeLevels',JSON.stringify(unlocked))}localStorage.setItem('arcadeTotal',total);localStorage.setItem('arcadeRecord',record);stats();$('pointsEarned').textContent='+'+score;$('resultHeading').textContent=passed?(level===5?'¡ERES MAESTRO!':'¡NIVEL SUPERADO!'):'¡Sigue practicando!';$('resultDetail').textContent=challengesCompleted+' de 10 retos completados. '+(passed?(level<5?'Desbloqueaste el nivel '+(level+1)+' 🔓':'Completaste todos los niveles 🏆'):'Necesitas 8 aciertos para desbloquear el siguiente nivel.')+' Ganaste '+earned+' monedas 🪙.';$('medal').textContent=passed?'🏆':challengesCompleted>=5?'🥈':'🎯';$('replay').onclick=()=>{selectedLevel=level;mode==='PREGUNTAS RÁPIDAS'?startQuiz():mode==='PALABRAS DESORDENADAS'?startScramble():startConnect()};show('resultView')}
+function next(fn){setTimeout(()=>{round++;fn()},850)}
+function randomQuestion(){let pool=words.slice(0,Math.min(words.length,20+level*16));let p=pool[Math.floor(Math.random()*pool.length)],toEnglish=Math.random()<.5;let col=toEnglish?1:0,right=p[col],term=p[1-col],opts=[right];while(opts.length<4){let v=words[Math.floor(Math.random()*20)][col];if(!opts.includes(v))opts.push(v)}return{term,right,opts:shuffle(opts),prompt:toEnglish?'Selecciona la traducción en inglés':'Selecciona la traducción en español'}}
+function startQuiz(){begin('PREGUNTAS RÁPIDAS');quizRound()}
+function quizRound(){if(round>=10){finish();return}progress();current=randomQuestion();time=Math.max(8,17-(level-1)*2);
+$('gameContent').innerHTML=`<div class="toolbar"><span class="tag">⏱️ TIEMPO: <b id="clock">${time}</b>s</span><span class="tag">+10 PTS POR ACIERTO</span></div><p class="prompt">${current.prompt}</p><div class="term">${current.term}</div><div class="options" id="opts"></div><div class="feedback" id="fb">Elige una respuesta.</div><div class="actionrow"><button class="soft" onclick="quizHint()">PISTA · 8 🪙</button></div>`;
+current.opts.forEach(v=>{let b=document.createElement('button');b.className='option';b.textContent=v;b.onclick=()=>answerQuiz(v,b);$('opts').appendChild(b)});
+timer=setInterval(()=>{time--;$('clock').textContent=time;if(time<=0){clearInterval(timer);lockQuiz();$('fb').textContent='Tiempo agotado. Respuesta: '+current.right;next(quizRound)}},1000)}
+function quizHint(){if(!hint())return;let wrong=[...document.querySelectorAll('#opts button')].filter(b=>b.textContent!==current.right&&!b.disabled);shuffle(wrong).slice(0,2).forEach(b=>b.disabled=true);$('fb').textContent='Pista comprada: eliminamos dos opciones incorrectas.'}
+function lockQuiz(){document.querySelectorAll('#opts button').forEach(b=>b.disabled=true)}
+function answerQuiz(v,b){clearInterval(timer);lockQuiz();if(v===current.right){b.classList.add('good');$('fb').textContent='¡Correcto! +10 puntos';$('fb').style.color='var(--green)';score+=10;correct++;challengesCompleted++}else{b.classList.add('bad');$('fb').textContent='La respuesta era: '+current.right;document.querySelectorAll('#opts button').forEach(x=>{if(x.textContent===current.right)x.classList.add('good')})}next(quizRound)}
+function startScramble(){begin('PALABRAS DESORDENADAS');round=0;used=[];scrambleRound()}
+let used=[];
+function scrambleRound(){if(round>=10){finish();return}progress();let pool=words.slice(0,Math.min(words.length,20+level*16)).map((w,i)=>i).filter(i=>!used.includes(i)),idx=pool[Math.floor(Math.random()*pool.length)];used.push(idx);let toEnglish=Math.random()<.5,p=words[idx],target=(toEnglish?p[1]:p[0]).toUpperCase(),hint=toEnglish?p[0]:p[1];answer=[];let chars=shuffle([...target].map((c,i)=>({c,id:i})));
+if(level>=3)target=target;current={target:target.replace(/ /g,''),chars,hint,toEnglish};
+$('gameContent').innerHTML=`<div class="tag">${toEnglish?'ESPAÑOL → INGLÉS':'ENGLISH → ESPAÑOL'}</div><p class="prompt">Ordena las letras para traducir:</p><div class="term">${hint}</div><div class="letterline" id="line"></div><div class="letters" id="letters"></div><div class="feedback" id="fb">Toca las letras en el orden correcto.</div><div class="actionrow"><button class="soft" onclick="clearLetters()">BORRAR</button><button class="soft" onclick="scrambleHint()">PISTA · 8 🪙</button><button class="confirm" onclick="checkLetters()">COMPROBAR</button></div>`;
+drawLetters()}
+function drawLetters(){let line=$('line'),bank=$('letters');line.innerHTML='';bank.innerHTML='';for(let i=0;i<current.target.length;i++){let s=document.createElement('div');s.className='slot';s.textContent=answer[i]?.c||'';line.appendChild(s)}current.chars.forEach(ch=>{if(answer.some(a=>a.id===ch.id))return;let b=document.createElement('button');b.className='letter';b.textContent=ch.c;b.onclick=()=>{answer.push(ch);drawLetters()};bank.appendChild(b)})}
+function clearLetters(){answer=[];drawLetters()}
+function scrambleHint(){if(!hint())return;let first=current.target[0];$('fb').textContent='Pista: la palabra empieza por «'+first+'» y tiene '+current.target.length+' letras.'}
+function checkLetters(){let v=answer.map(a=>a.c).join('');if(v===current.target){score+=10;correct++;challengesCompleted++;$('fb').textContent='¡Perfecto! +10 puntos';$('fb').style.color='var(--green)'}else{$('fb').textContent='La respuesta correcta era: '+current.target;$('fb').style.color='var(--red)'}document.querySelectorAll('#letters button,.actionrow button').forEach(b=>b.disabled=true);next(scrambleRound)}
+function startConnect(){begin('CONECTA PALABRAS');round=0;connectRound()}
+function connectRound(){if(round>=10){finish();return}progress();let batch=shuffle(words.slice(0,Math.min(words.length,20+level*16))).slice(0,4);let left=shuffle(batch.map((p,i)=>({word:p[0],id:i}))),right=shuffle(batch.map((p,i)=>({word:p[1],id:i})));matched=[];selectedSpanish=null;let locked=false;
+$('gameContent').innerHTML=`<div class="tag">RETO 1 DE 10 · 4 PAREJAS</div><p class="prompt">Selecciona una palabra en español y después su traducción en inglés.</p><div class="pairs"><div class="paircol" id="left"></div><div class="paircol" id="right"></div></div><div class="feedback" id="fb">Encuentra las cuatro parejas.</div><div class="actionrow"><button class="soft" onclick="connectHint()">PISTA · 8 🪙</button></div>`;
+left.forEach(p=>makePair('left',p,'L'));right.forEach(p=>makePair('right',p,'R'));
+function connectHint(){if(!hint())return;let remain=left.filter(x=>!matched.includes(x.id));if(remain.length){let p=remain[0],translation=batch[p.id][1];$('fb').textContent='Pista: «'+p.word+'» significa «'+translation+'».'}}
+function makePair(parent,p,side){let b=document.createElement('button');b.className='pair';b.textContent=p.word;b.dataset.id=p.id;b.dataset.side=side;b.onclick=()=>{if(locked||b.classList.contains('done'))return;if(side==='L'){document.querySelectorAll('[data-side="L"]').forEach(x=>x.classList.remove('sel'));b.classList.add('sel');selectedSpanish=p;return}if(!selectedSpanish){$('fb').textContent='Primero elige una palabra en español.';return}let leftButton=document.querySelector('[data-side="L"].sel');if(p.id===selectedSpanish.id){leftButton.classList.remove('sel');leftButton.classList.add('done');b.classList.add('done');matched.push(p.id);score+=5;correct++;$('fb').textContent='¡Pareja correcta! +5 puntos';$('fb').style.color='var(--green)';selectedSpanish=null;if(matched.length===4){challengesCompleted++;next(connectRound)}}else{locked=true;b.classList.add('sel');$('fb').textContent='No coinciden. Prueba otra vez.';$('fb').style.color='var(--red)';setTimeout(()=>{b.classList.remove('sel');leftButton?.classList.remove('sel');selectedSpanish=null;locked=false},650)}};$(parent).appendChild(b)}
+}
+applyTheme();setMusic();stats();$('wordCount').textContent=words.length+' palabras';
+</script>
+</body>
+</html>
